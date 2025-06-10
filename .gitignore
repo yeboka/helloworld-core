@@ -1,0 +1,9 @@
+#general
+.idea
+
+#back end ignores
+backend/node_modules
+backend/dist
+
+backend/schema.graphql
+backend/package-lock.json
