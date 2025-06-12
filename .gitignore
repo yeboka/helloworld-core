@@ -7,3 +7,4 @@ backend/dist
 
 backend/schema.graphql
 backend/package-lock.json
+backend/.env

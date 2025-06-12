@@ -5,6 +5,7 @@ import cors from 'cors';
 import mongoose from "mongoose";
 import { buildSchema } from "type-graphql";
 import { ImageResolver } from "./resolvers/imageResolver.js";
+import dotenv from "dotenv";
 
 async function startServer() {
 
@@ -13,9 +14,7 @@ async function startServer() {
   app.use(cors());
   app.use(express.json());
 
-  await mongoose.connect(
-    "mongodb+srv://yerbolat:LLT5ToyN5MRrOaOY@helloworld-core.s5rfikj.mongodb.net/gallery?retryWrites=true&w=majority&appName=helloworld-core"
-  );
+  await mongoose.connect(process.env.MONGO_DB_URL ?? "");
 
   const schema = await buildSchema({
     resolvers: [ImageResolver],
@@ -39,6 +38,7 @@ async function startServer() {
   });
 }
 
+dotenv.config()
 startServer().catch(
   (err) => {
     console.log('Error starting server:', err)

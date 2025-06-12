@@ -15,4 +15,13 @@ export class Image {
   description?: string;
 }
 
+@ObjectType()
+export class SignedUrlResponse {
+  @Field()
+  uploadUrl!: string;
+
+  @Field()
+  imageUrl!: string;
+}
+
 export const ImageModel = getModelForClass(Image);

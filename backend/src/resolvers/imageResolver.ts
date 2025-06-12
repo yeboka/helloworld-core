@@ -1,5 +1,6 @@
 import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
-import { Image, ImageModel } from "../models/image.js";
+import { Image, ImageModel, SignedUrlResponse } from "../models/image.js";
+import { getSignedUrl } from "../services/s3Service.js";
 
 @Resolver(Image)
 export class ImageResolver {
@@ -12,6 +13,14 @@ export class ImageResolver {
   @Query(() => [Image])
   async images() {
     return ImageModel.find();
+  }
+
+  @Mutation(() => SignedUrlResponse)
+  async getS3SignedUrl(
+    @Arg("fileName") fileName: string,
+    @Arg("fileType") fileType: string,
+  ) {
+    return getSignedUrl(fileName, fileType);
   }
 
   @Mutation(() => Image)
