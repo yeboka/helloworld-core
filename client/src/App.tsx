@@ -1,35 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import { Button, Typography } from "antd";
+import { Header } from "antd/es/layout/layout";
+import ImageUploadModal from "./components/modal/ImageUploadModal";
+import Images from "./components/Images";
+import { useImageStore } from "./store/imageStore";
+
+const {Title} = Typography;
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const {setIsModalOpen} = useImageStore()
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className={'flex flex-col'}>
+      <Header className={'color-[#0a1521]'}>
+        <Title level={3} style={{color: 'white', textAlign: 'center', lineHeight: '64px'}}>
+          helloworld - core
+        </Title>
+      </Header>
+      <div className={'w-full flex justify-center flex-1'}>
+        <div className={'flex flex-col container w-full gap-5 p-[24px] '}>
+          <Button color={"blue"} variant={"dashed"} onClick={() => setIsModalOpen(true)}>
+            Загрузить изображение
+          </Button>
+          <ImageUploadModal/>
+          <Images/>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      <footer style={{textAlign: 'center'}}>
+        Simple S3 Uploader ©{new Date().getFullYear()} Created by You
+      </footer>
+    </div>
+  );
+
 }
 
 export default App

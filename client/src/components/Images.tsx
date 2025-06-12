@@ -1,0 +1,46 @@
+import React, { useEffect } from 'react';
+import { useQuery } from "@apollo/client";
+import { Image } from 'antd'
+import { GET_IMAGES } from "../api/queries";
+import { useImageStore } from "../store/imageStore";
+
+const Images: React.FC = () => {
+
+  const { loading, error, data, refetch } = useQuery(GET_IMAGES);
+
+  const {
+    images,
+    setImages,
+    isModalOpen,
+  } = useImageStore();
+
+  useEffect(() => {
+    if (!data) return;
+    setImages(data.images ?? []);
+  }, [data])
+
+  useEffect(() => {
+    refetch();
+  }, [isModalOpen])
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error : {error.message}</p>;
+
+  return (
+    <div className={"columns-1 sm:columns-3 md:columns-4 lg:columns-5 w-full"}>
+        {images.map((image: { id: string; url: string; }) => (
+          <div key={image.id} >
+            <Image
+              className={'max-w-[300px] w-full'}
+              src={image.url}
+              preview={{
+                src: image.url,
+              }}
+            />
+          </div>
+        ))}
+    </div>
+  );
+};
+
+export default Images;
