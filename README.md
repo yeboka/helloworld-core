@@ -32,4 +32,4 @@
 
 ```bash
 cd client && npm install && npm run dev
-cd server && npm install && npm run start
+cd backend && npm install && npm run build && npm run start
