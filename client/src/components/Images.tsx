@@ -3,6 +3,7 @@ import { useQuery } from "@apollo/client";
 import { Image } from 'antd'
 import { GET_IMAGES } from "../api/queries";
 import { useImageStore } from "../store/imageStore";
+import * as url from "url";
 
 const Images: React.FC = () => {
 
@@ -27,15 +28,16 @@ const Images: React.FC = () => {
   if (error) return <p>Error : {error.message}</p>;
 
   return (
-    <div className={"columns-1 sm:columns-3 md:columns-4 lg:columns-5 w-full"}>
+    <div className={"columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-2 w-full"}>
         {images.map((image: { id: string; url: string; }) => (
           <div key={image.id} >
             <Image
-              className={'max-w-[300px] w-full'}
+              className={'w-full rounded-md'}
               src={image.url}
               preview={{
                 src: image.url,
               }}
+              loading={"lazy"}
             />
           </div>
         ))}

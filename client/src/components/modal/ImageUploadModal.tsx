@@ -145,10 +145,10 @@ const ImageUploadModal: React.FC = () => {
         layout="vertical"
         onFinish={onFinish}
         initialValues={{description: ''}}
+        className={"w-full flex justify-center"}
       >
         <Form.Item
           name="file"
-          label="Изображение"
           rules={[{required: true, message: 'Пожалуйста, выберите изображение!'}]}
           valuePropName="fileList"
           getValueFromEvent={(e) => {
@@ -161,6 +161,9 @@ const ImageUploadModal: React.FC = () => {
             fileList={fileList}
             onChange={handleFileChange}
             maxCount={1}
+            showUploadList={{
+              showPreviewIcon: false
+            }}
             accept="image/*"
             beforeUpload={(file) => {
               setFileList([file]);
