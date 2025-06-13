@@ -6,10 +6,44 @@ import { useMutation } from '@apollo/client';
 import { CREATE_IMAGE_MUTATION, GET_S3_SIGNED_URL_MUTATION } from "../../api/mutations";
 import { useImageStore } from "../../store/imageStore";
 import { useNotification } from "../../context/useNotificationContext";
+import { RcFile } from "antd/es/upload";
 
 interface ImageUploadFormValues {
   file?: UploadFile[];
 }
+
+//upload image to S3 and get image url
+export const uploadImage = async (
+  file: RcFile | File,
+  getSignedUrlMutation: (options?: MutationFunctionOptions<any, Record<string, any>, DefaultContext, ApolloCache<any>>) => Promise<any>,
+  fetchFunction: typeof fetch = window.fetch
+) => {
+  const {data: signedUrlData} = await getSignedUrlMutation({
+    variables: {
+      fileName: file.name,
+      fileType: file.type,
+    },
+  });
+
+  if (!signedUrlData || !signedUrlData.getS3SignedUrl) {
+    throw new Error('Не удалось получить подписанный URL от сервера.');
+  }
+
+  const {uploadUrl, imageUrl: s3ImageUrl} = signedUrlData.getS3SignedUrl;
+
+  const s3Response = await fetch(uploadUrl, {
+    method: 'PUT',
+    body: file,
+  });
+
+  if (!s3Response.ok) {
+    const errorText = await s3Response.text();
+    throw new Error(`Ошибка загрузки в S3: ${s3Response.status} ${s3Response.statusText}. Ответ: ${errorText}`);
+  }
+
+  return s3ImageUrl
+}
+
 
 const ImageUploadModal: React.FC = () => {
   const [form] = Form.useForm<ImageUploadFormValues>();
@@ -60,29 +94,9 @@ const ImageUploadModal: React.FC = () => {
     setError(null);
 
     try {
-      const {data: signedUrlData} = await getSignedUrlMutation({
-        variables: {
-          fileName: file.name,
-          fileType: file.type,
-        },
-      });
+      const s3ImageUrl = await uploadImage(file, getSignedUrlMutation);
 
-      if (!signedUrlData || !signedUrlData.getS3SignedUrl) {
-        throw new Error('Не удалось получить подписанный URL от сервера.');
-      }
-
-      const {uploadUrl, imageUrl: s3ImageUrl} = signedUrlData.getS3SignedUrl;
-
-      const s3Response = await fetch(uploadUrl, {
-        method: 'PUT',
-        body: file,
-      });
-
-      if (!s3Response.ok) {
-        const errorText = await s3Response.text();
-        throw new Error(`Ошибка загрузки в S3: ${s3Response.status} ${s3Response.statusText}. Ответ: ${errorText}`);
-      }
-
+      //Save image in Mongo DB
       const {data: createImageData} = await createImageRecordMutation({
         variables: {
           url: s3ImageUrl,
@@ -94,11 +108,7 @@ const ImageUploadModal: React.FC = () => {
       }
 
       success("Изображение успешно загружено!", file.name)
-
-      setIsModalOpen(false);
-      form.resetFields();
-      setFileList([]);
-
+      handleCancel()
     } catch (err: any) {
       setError(err.message);
       error('Ошибка', err.message);
