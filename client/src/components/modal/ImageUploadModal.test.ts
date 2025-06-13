@@ -5,8 +5,8 @@ describe('uploadImage', () => {
   const mockSignedUrl = 'https://s3.example.com/upload-url';
   const mockS3ImageUrl = 'https://s3.example.com/test-image.png';
 
-  let mockGetSignedUrlMutation: jest.Mock;
-  let mockFetch: jest.Mock;
+  let mockGetSignedUrlMutation: jest.Mock<any, any[]>; // Corrected type
+  let mockFetch: jest.Mock<any, any[]>; // Corrected type
 
   beforeEach(() => {
     mockGetSignedUrlMutation = jest.fn();

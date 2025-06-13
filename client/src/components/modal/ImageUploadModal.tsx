@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import type { UploadFile } from 'antd';
 import { Button, Form, Modal, Typography, Upload } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { useMutation } from '@apollo/client';
+import { ApolloCache, useMutation } from '@apollo/client';
+import  type { DefaultContext, MutationFunctionOptions, } from '@apollo/client';
 import { CREATE_IMAGE_MUTATION, GET_S3_SIGNED_URL_MUTATION } from "../../api/mutations";
 import { useImageStore } from "../../store/imageStore";
 import { useNotification } from "../../context/useNotificationContext";
-import { RcFile } from "antd/es/upload";
+import type { RcFile } from "antd/es/upload";
 
 interface ImageUploadFormValues {
   file?: UploadFile[];
@@ -31,7 +32,7 @@ export const uploadImage = async (
 
   const {uploadUrl, imageUrl: s3ImageUrl} = signedUrlData.getS3SignedUrl;
 
-  const s3Response = await fetch(uploadUrl, {
+  const s3Response = await fetchFunction(uploadUrl, {
     method: 'PUT',
     body: file,
   });
