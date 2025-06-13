@@ -3,7 +3,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { useImageStore } from "../store/imageStore";
 import { Button } from "antd";
 
-const UploadButton = () => {
+const UploadButton: React.FC = () => {
   const {setIsModalOpen} = useImageStore()
 
   return (

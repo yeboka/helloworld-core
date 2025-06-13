@@ -3,7 +3,6 @@ import { useQuery } from "@apollo/client";
 import { Image } from 'antd'
 import { GET_IMAGES } from "../api/queries";
 import { useImageStore } from "../store/imageStore";
-import * as url from "url";
 
 const Images: React.FC = () => {
 
